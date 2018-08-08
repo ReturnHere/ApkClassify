@@ -55,20 +55,27 @@ class GenStartData:
         #realdata = realdata.reindex(columns = xclouns)
 
         #print  realdata[column_names[16]]
-        X_train, X_text, y_train, y_test = train_test_split(realdata[xclouns[1:12]],realdata["family_id"],test_size=0.8,random_state = 33 )
+        X_train, X_test, y_train, y_test = train_test_split(realdata[xclouns[1:12]],realdata["family_id"],test_size=0.25,random_state = 33 )
         #print y_test.value_counts()
+        print y_train.value_counts()
+        print y_test.value_counts()
         ss = StandardScaler() #standadize data : variance = 1, mean value = 0
         X_train = ss.fit_transform(X_train)
-        X_text = ss.transform(X_text)
+        X_text = ss.transform(X_test)
 
         lr = LogisticRegression() #initialize Logistic Regression
         sgdc = SGDClassifier(max_iter=5) #initialize SGDClassifier
         lr.fit(X_train,y_train) #train
-        lr_y_predict = lr.predict(X_text) #predict
+        lr_y_predict = lr.predict(X_test) #predict
+        print classification_report(y_test ,lr_y_predict, target_names = ["0","1","2","3","4","5"])
+        #print type(lr_y_predict)
         sgdc.fit(X_train,y_train)
-        sgdc_y_predict = sgdc.predict(X_text)
+        #print type(X_text)
+        sgdc_y_predict = sgdc.predict(X_test)
         #print lr_y_predict
         #print sgdc_y_predict
+
+
         print "accuraacy of LR Classifier :" , lr.score(X_text, y_test)
 
         print "accuraacy of sgdc Classifier :" ,sgdc.score(X_text, y_test)
